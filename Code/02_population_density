@@ -31,3 +31,31 @@ plot(densitymap)
 plot(densitymap)
 points(bei)
 points(bei, col="green", pch=19, cex=0.5)
+
+##### DAY 2
+
+par(mfrow=c(1,2))
+plot(elevation)
+plot(densitymap)
+
+par(mfrow=c(2,1))
+plot(elevation)
+plot(densitymap)
+
+# torniamo al plot originale
+dev.off()
+
+# Changing colors to maps
+cln <- colorRampPalette(c("red", "orange", "yellow"))(15)
+plot(densitymap, col=cln)
+
+# colors in R dove trovo tutti i colori utilizzabili
+http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf
+
+clg <- colorRampPalette(c("lightcyan4", "lightgrey", "indianred4"))(100)
+plot(densitymap, col=clg)
+
+# esercizio per mettere le due mappe di due colori diversi una accanto all'altra
+par(mfrow=c(1,2))
+plot(densitymap, col=cln)
+plot(densitymap, col=clg)

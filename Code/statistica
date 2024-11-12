@@ -1,0 +1,17 @@
+# fare un graifoc di una distribuzione normale con average 132 e sd 13
+x=seq(80, 184, 0.5)
+y = dnorm(x,mean=132,sd=13)
+plot(x, y, type="l")
+
+# metto una linea a livello zero
+abline(h=0)
+
+# metto le coordinate dei limiti dell'intervallo
+owlim=qnorm(0.025,mean=132,sd=13) # x = 106.5205
+lowlim=qnorm(0.025,mean=132,sd=13) # x = 106.5205
+
+
+# metto i due intervalli definendo le coordinate di x e y, le altre duee coordinate definiscono l'ending point dei segmenti sulla curva
+segments(lowlim, 0, lowlim, dnorm(lowlim, 132, 13), col="red")
+segments(upplim, 0, upplim, dnorm(upplim, 132, 13), col="red")
+segments(160, 0, 160, dnorm(160, 132, 13), col="blue")

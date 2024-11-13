@@ -1,0 +1,15 @@
+# Code for managing and analyzing remotery sensing data
+
+
+
+# we have to install the package imageRy, we have to use the function install_githus()
+# which is part of a package called devtools
+
+install.packages("devtools")
+library(devtools) # packages in R are also called library
+
+# now we install the other package
+install_github("ducciorocchini/imageRy")
+install.packages("Rtools")
+
+library(imageRy)

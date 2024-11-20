@@ -13,3 +13,41 @@ install_github("ducciorocchini/imageRy")
 install.packages("Rtools")
 
 library(imageRy)
+
+# list the data
+im.list()
+
+# Sentinel 2 is the name of the satellite
+# this function let's you import the data and use it (although it is already in R)
+b2 <- im.import("sentinel.dolomites.b2.tif")
+
+# we can use another color palette
+cl <- colorRampPalette(c("black", "grey", "light grey")) (100)
+
+# ora si vede la riflessione dei colori con il grigio chiaro
+plot(b2, col=cl)
+
+# exercise import number 3 with the previvous palette
+b3 <- im.import("sentinel.dolomites.b3.tif") 
+plot(b3, col=cl)
+
+# import b4 the red band
+b4 <- im.import("sentinel.dolomites.b4.tif") 
+plot(b4, col=cl)
+
+# import b8, fuori dalla banda visibile (?), è la NIR band
+b8 <- im.import("sentinel.dolomites.b8.tif") 
+plot(b8, col=cl)
+
+# multiframe tutte insieme
+par(mfrow=c(2,2))
+plot(b2, col=cl)
+plot(b3, col=cl)
+plot(b4, col=cl)
+plot(b8, col=cl)
+
+# stack in modo che interagiscano l'una con l'altra, nella stessa immagine, le devo concatenare e dare un nome all'immagine
+stacksent <- c(b2, b3, b4, b8)
+dev.off() # it closes devices
+plot(stacksent, col=cl)
+

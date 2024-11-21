@@ -80,7 +80,14 @@ cln <- colorRampPalette(c("brown", "orange", "yellow")) (100)
 plot(b8, col=cln)
 
 # RGB plotting
+# band2 blue element 1, stacksent[[1]] 
+# band3 green element 2, stacksent[[2]]
+# band4 red element 3, stacksent[[3]]
+# band8 nir element 4, stacksent[[4]]
+
 im.plotRGB(stacksent, r=3, g=2, b=1) # natural color image
-im.plotRGB(stacksent, r=4, g=3, b=2) # infrarossi
+im.plotRGB(stacksent, r=4, g=3, b=2) # we put the near infrarossi on the top of the others, so everything that it's reflecting in the infrared can be seen
+im.plotRGB(stacksent, r=3, g=4, b=2) # everything that is reflected by the NIR should be in ultra green
+im.plotRGB(stacksent, r=3, g=2, b=4) # in this case the vegation becomes blue because...
 
 

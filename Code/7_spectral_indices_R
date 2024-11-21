@@ -1,4 +1,38 @@
-# vegetation indices
+# spectral indices
+
 
 library(imageRy)
 library(terra)
+
+# listing files
+im.list()
+
+# Importing data: we are using the file matogrosso
+m2006 <- im.import("matogrosso_ast_2006209_lrg.jpg")  # it is an image with bands already stack 
+
+# in the data provided by the nasa we know that:
+# band 1 = NIR
+# band 2 = red
+# band 3 = green
+
+im.plotRGB(m2006, r=1, g=2, b=3)
+
+plot(m2006[[2]])
+plot(m2006[[3]])
+plot(m2006[[1]])
+
+# we can put the NIR on top of the blue
+im.plotRGB(m2006, r=3, g=2, b=1) # all the human used soil is colored in yellow, while the water is not black because there are different materials inside
+, 
+# we can enance vegetation putting the green on top
+im.plotRGB(m2006, r=3, g=1, b=2)
+
+# import the image from 1992 to see how was the situation before humans
+m1992 <- im.import("matogrosso_l5_1992219_lrg.jpg")
+
+im.plotRGB(m1992, r=3, g=2, b=1) 
+
+# multiframe with the images beside each other
+par(mfrow=c(1,2))
+im.plotRGB(m1992, r=2, g=3, b=1)
+im.plotRGB(m2006, r=2, g=3, b=1)

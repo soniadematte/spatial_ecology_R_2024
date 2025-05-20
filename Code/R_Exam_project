@@ -1,0 +1,23 @@
+library(openeo)
+
+# connect to the backend and authenticate
+connection = connect(host = "https://openeofed.dataspace.copernicus.eu")
+login()
+# get the process collection to use the predefined processes of the back-end
+p = processes()
+
+# get the collection list to get easier access to the collection ids, via auto completion
+collections = list_collections()
+
+# get the formats
+formats = list_file_formats()
+
+# load the initial data collection and limit the amount of data loaded
+# note: for the collection id and later the format you can also use the its character value
+data = p$load_collection(id = collections$`SENTINEL1_GRD`,
+                         spatial_extent = list(west=11.435623, 
+                                               south=44.45438,
+                                               east=11.255722,
+                                               north=44.53368),
+                         temporal_extent = c("2017-03-01", "2017-06-01"),
+                         bands = c("VV"))

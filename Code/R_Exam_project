@@ -21,3 +21,8 @@ data = p$load_collection(id = collections$`SENTINEL1_GRD`,
                                                north=44.53368),
                          temporal_extent = c("2017-03-01", "2017-06-01"),
                          bands = c("VV"))
+library(terra)
+r <- rast("C:/SpatialEcology_Progetto/ragusa.tiff")
+r_norm <- r / 10000
+plotRGB(r_norm, r=1, g=2, b=3, stretch="lin")
+

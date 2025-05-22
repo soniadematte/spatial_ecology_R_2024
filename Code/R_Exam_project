@@ -1,28 +1,50 @@
-library(openeo)
+***********************************************************************************
+### DESERTIFICATION IN SICILY, FOCUS ON PARCO DELLE MADONIE AND FUTURE TRENDS ###
+***********************************************************************************
 
-# connect to the backend and authenticate
-connection = connect(host = "https://openeofed.dataspace.copernicus.eu")
-login()
-# get the process collection to use the predefined processes of the back-end
-p = processes()
-
-# get the collection list to get easier access to the collection ids, via auto completion
-collections = list_collections()
-
-# get the formats
-formats = list_file_formats()
-
-# load the initial data collection and limit the amount of data loaded
-# note: for the collection id and later the format you can also use the its character value
-data = p$load_collection(id = collections$`SENTINEL1_GRD`,
-                         spatial_extent = list(west=11.435623, 
-                                               south=44.45438,
-                                               east=11.255722,
-                                               north=44.53368),
-                         temporal_extent = c("2017-03-01", "2017-06-01"),
-                         bands = c("VV"))
+# Use of the package "terra" for spatial data analysis
 library(terra)
-r <- rast("C:/SpatialEcology_Progetto/ragusa.tiff")
-r_norm <- r / 10000
-plotRGB(r_norm, r=1, g=2, b=3, stretch="lin")
 
+# Creation of dataframe: temperature and precipitation in Sicily for each year analysed (2010, 2015, 2020, 2025)
+# To create a dataframe I use can not use the package meteostat because is too old for R and Rstudio, so I have to download them manually
+# I download the data of temperature and precipitation for the period 01/06/2010 - 31/08/2010 of each year in Parco delle Madonie, located in Petralia Sottana
+# from the website of meteostat.
+
+# I install the packages I am going to use 
+install.packages("readr")
+install.packages("ggplot2")
+install.packages("dplyr)"
+
+
+# I upload the packages
+library(readr)
+library(ggplot2)
+library(dplyr)
+
+# I upload the data of the meteo station from my file of each year
+meteo2010 <- read_csv("C:/SpatialEcology_Progetto/ParcoMadonie_2010.csv")
+
+# I check the columns
+head(meteo2010)
+
+meteo2015<- read_csv("C:/SpatialEcology_Progetto/ParcoMadonie_2015.csv")
+head(meteo2015)
+
+meteo2020<- read_csv("C:/SpatialEcology_Progetto/ParcoMadonie_2020.csv")
+head(meteo2020)
+
+meteo2024<- read_csv("C:/SpatialEcology_Progetto/ParcoMadonie_2024.csv")
+head(meteo2024)
+
+# I combine all the data of the meteo in one file
+meteo_all <- bind_rows(meteo2010, meteo2015, meteo2020, meteo2024)
+
+# I calculate the mean of the temperature of each year 
+mean_summer <- meteo_all %>%
+  group_by(anno) %>%
+  summarise(
+ mean_temp = mean(tavg, na.rm = TRUE),
+    total_prec = sum(prec, na.rm = TRUE)
+  )
+print(mean_summer)
+CONTROLLA PERCHè NON FUNZIONAAAASAKFONKDSFNFDSJPDJKJW

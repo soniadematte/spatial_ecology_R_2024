@@ -15,6 +15,7 @@ install.packages("readr")
 install.packages("ggplot2")
 install.packages("dplyr")
 install.packages("viridis")
+install.packages("reshape2")
 
 
 # I upload the packages
@@ -22,6 +23,7 @@ library(readr)
 library(ggplot2)
 library(dplyr)
 library(viridis)
+library(reshape2)
 
 # I upload the data of the meteo station from my file of each year
 meteo2010 <- read_csv("C:/SpatialEcology_Progetto/ParcoMadonie_2010.csv")
@@ -188,16 +190,105 @@ plot(ndvi_diff_2010_2024,
 
 # Then I create a dataframe with all my data to compare vegetation, precipitation and temperature between all four years
 
+# I find the mean NDVI of each year with the function global of the package terra
+ndvi_2010_val <- global(ndvi_mean2010, fun = mean, na.rm = TRUE)[[1]]
+ndvi_2015_val <- global(ndvi_mean2015, fun = mean, na.rm = TRUE)[[1]]
+ndvi_2020_val <- global(ndvi_mean2020, fun = mean, na.rm = TRUE)[[1]]
+ndvi_2024_val <- global(ndvi_mean2024, fun = mean, na.rm = TRUE)[[1]]
 
+# I put everything in a dataframe 
+dati_ndvi <- data.frame(
+  year = c(2010, 2015, 2020, 2024),
+  mean_ndvi = c(ndvi_2010_val, ndvi_2015_val, ndvi_2020_val, ndvi_2024_val)
+)
+
+# I get the mean NDVI
+print(mean_ndvi)
+
+# Now I can get a dataframe with all the necessary data to create a plot
 complete_data <- data.frame(
   year = c(2010, 2015, 2020, 2024),
-  mean_ndvi = c(0.45, 0.48, 0.51, 0.43),
+  mean_ndvi = c(0.56, 0.58, 0.56, 0.53),
   mean_temp = c(24.0, 21.9, 25.0, 25.1),
   total_precip = c(5, 72.9, 9.2, 14.1)
 )
 
+# NDVI plot
+
+ggplot(complete_data, aes(x = year, y = mean_ndvi)) +
+  geom_line(color = "#1b9e77", size = 1.2) +
+  geom_point(color = "#1b9e77", size = 3) +
+  labs(title = "Mean Summer NDVI", x = "Year", y = "NDVI") +
+  theme_minimal()
+
+# Temperature plot
+ggplot(complete_data, aes(x = year, y = mean_temp)) +
+  geom_line(color = "#d95f02", size = 1.2) +
+  geom_point(color = "#d95f02", size = 3) +
+  labs(title = "Mean Summer Temperature", x = "Year", y = "°C") +
+  theme_minimal()
+
+
+# Precipitation plot
+ggplot(complete_data, aes(x = year, y = total_precip)) +
+  geom_line(color = "#7570b3", size = 1.2) +
+  geom_point(color = "#7570b3", size = 3) +
+  labs(title = "Total Summer Precipitation", x = "Year", y = "mm") +
+  theme_minimal()
 
 
 
+
+
+# Now I want to do a prediction of NDVI based on the previously years, supponendo that it is a constat and linear variation
+# Modello lineare semplice
+ndvi_model <- lm(mean_ndvi ~ year, data = complete_data)
+
+# Previsione per il 2030
+predicted_ndvi <- predict(ndvi_model, newdata = data.frame(year = 2030))
+print(predicted_ndvi)
+
+# NDVI trend: variazione media ogni 14 anni
+ndvi_diff <- ndvi_mean2024 - ndvi_mean2010
+ndvi_trend <- ndvi_diff / 14  # variazione media annua
+
+# Proietta al 2030 (6 anni dopo il 2024)
+ndvi_2030 <- ndvi_mean2024 + ndvi_trend * 6
+
+# Visualizza
+plot(ndvi_2030,
+     col = palette_ndvi(100),
+     main = "Estimated NDVI - Summer 2030",
+      zlim = c(-0.2, 0.2)
+)
+
+# Now I do a linear regression to understand how NDVI will be in 2030, which will be even more statistical significative
+ndvi_years <- data.frame(
+  year = c(2010, 2015, 2020, 2024),
+  mean_ndvi = c(0.5631159, 0.5792164, 0.5631159, 0.5273455)
+)
+
+# Fit linear model
+model <- lm(mean_ndvi ~ year, data = ndvi_years)
+
+# Predict NDVI for 2030
+predicted_2030 <- predict(model, newdata = data.frame(year = 2030))
+
+# Add 2030 prediction to the dataframe for plotting
+ndvi_years <- rbind(ndvi_years, data.frame(year = 2030, mean_ndvi = predicted_2030))
+
+# Plot
+ggplot(ndvi_years, aes(x = year, y = mean_ndvi)) +
+  geom_line(color = viridis::viridis(1), size = 1.2) +
+  geom_point(size = 3, aes(color = as.factor(year))) +
+  scale_color_viridis_d(option = "viridis") +
+  ylim(0.50, 0.60) +
+  labs(
+    title = "Mean Summer NDVI Trend (2010–2030)",
+    x = "Year",
+    y = "Mean NDVI",
+    color = "Year"
+  ) +
+  theme_minimal()
 
 

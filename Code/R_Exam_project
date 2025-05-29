@@ -168,10 +168,36 @@ print(tif_files2024)
 # Carica tutti i raster in uno stack
 ndvi_stack2024 <- rast(tif_files2024)
 
-# Calcola la media dei valori pixel-per-pixel
-ndvi_mean2024 <- mean(ndvi_stack2024, na.rm = TRUE)
+# Calcolo la diff NDVI dal 2024 al 2010
+ndvi_diff_2010_2024 <- ndvi_2024 - ndvi_2010
 
-# Visualizza la media NDVI su mappa con palette per daltonici "viridis"
-  plot(ndvi_mean2024, 
-          main = "Mean NDVI - Summer 2024 (Parco delle Madonie)",
-           col = viridis(100))
+# Crea una nuova palette con transizione netta intorno allo zero
+library(terra)
+library(viridis)
+
+# Now I calculate the NDVI diff between each year, and then from 2024 to 2010 to see more the impact
+# imposta colori personalizzati con soglia visuale più chiara
+palette_ndvi <- colorRampPalette(c("#313695", "#f7f7f7", "#006837"))  # blu - grigio - verde
+
+# Traccia il raster con la nuova palette
+plot(ndvi_diff_2010_2024,
+     col = palette_ndvi(100),
+     main = "NDVI Change (2024 - 2010)",
+     zlim = c(-0.2, 0.2))
+
+
+# Then I create a dataframe with all my data to compare vegetation, precipitation and temperature between all four years
+
+
+complete_data <- data.frame(
+  year = c(2010, 2015, 2020, 2024),
+  mean_ndvi = c(0.45, 0.48, 0.51, 0.43),
+  mean_temp = c(24.0, 21.9, 25.0, 25.1),
+  total_precip = c(5, 72.9, 9.2, 14.1)
+)
+
+
+
+
+
+

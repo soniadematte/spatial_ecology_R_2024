@@ -86,29 +86,92 @@ ggplot(meteo_summary, aes(x = year, y = average_temperature, group = 1)) +
   theme_minimal()
 
 
-# to download the images of the park for 2010, 2015, 2020, 2024 I use Copernicus with
-# sentinel 2 for the last three years, but for 2010 I have to use appEEARS, another 
-# NASA website with geodata
+# to download the images of the park for 2010, 2015, 2020, 2024 I have to use appEEARS, another 
+# NASA website with geodata, beacuse even though is not extreme good quality it is better for me to use 
+# because there is no data of the years 2010 and 2015 with Sentinel-2, so I use always the same kind of 
+# map to be more coherent and scientific. 
 
 # For the year 2010 I downloaded the images from 1/06/2010 to 31/08/2010 in NDVI format, 
 # then I made the mean of the NDVI to get just one image to see
 
-
-tif_folder <- "C:/SpatialEcology_Progetto/Madonie_2010"
+# Year 2010
+tif_folder2010 <- "C:/SpatialEcology_Progetto/Madonie_2010"
 
 # Crea la lista di file .tif
-tif_files <- list.files(path = tif_folder, pattern = "\\.tif$", full.names = TRUE)
+tif_files2010 <- list.files(path = tif_folder2010, pattern = "\\.tif$", full.names = TRUE)
 
 # Controlla che i file siano stati caricati
-print(tif_files)
+print(tif_files2010)
 
 # Carica tutti i raster in uno stack
-> ndvi_stack <- rast(tif_files)
-> 
-  > # Calcola la media dei valori pixel-per-pixel
-  > ndvi_mean <- mean(ndvi_stack, na.rm = TRUE)
-> 
-  > # Visualizza la media NDVI su mappa con palette per daltonici "viridis"
-  plot(ndvi_mean, 
-       +      main = "Mean NDVI - Summer 2010 (Parco delle Madonie)",
-       +      col = viridis(100))
+ndvi_stack2010 <- rast(tif_files2010)
+
+ # Calcola la media dei valori pixel-per-pixel
+ ndvi_mean2010 <- mean(ndvi_stack2010, na.rm = TRUE)
+
+ # Visualizza la media NDVI su mappa con palette per daltonici "viridis"
+  plot(ndvi_mean2010, 
+            main = "Mean NDVI - Summer 2010 (Parco delle Madonie)",
+            col = viridis(100))
+
+# Year 2015
+
+tif_folder2015 <- "C:/SpatialEcology_Progetto/Madonie_2015"
+
+# Crea la lista di file .tif
+tif_files2015 <- list.files(path = tif_folder2015, pattern = "\\.tif$", full.names = TRUE)
+
+# Controlla che i file siano stati caricati
+print(tif_files2015)
+
+# Carica tutti i raster in uno stack
+ndvi_stack2015 <- rast(tif_files2015)
+
+# Calcola la media dei valori pixel-per-pixel
+ndvi_mean2015 <- mean(ndvi_stack2015, na.rm = TRUE)
+
+# Visualizza la media NDVI su mappa con palette per daltonici "viridis"
+  plot(ndvi_mean2015, 
+          main = "Mean NDVI - Summer 2015 (Parco delle Madonie)",
+           col = viridis(100))
+
+# Year 2020
+tif_folder2020 <- "C:/SpatialEcology_Progetto/Madonie_2020"
+
+# Crea la lista di file .tif
+tif_files2020 <- list.files(path = tif_folder2020, pattern = "\\.tif$", full.names = TRUE)
+
+# Controlla che i file siano stati caricati
+print(tif_files2020)
+
+# Carica tutti i raster in uno stack
+ndvi_stack2020 <- rast(tif_files2020)
+
+# Calcola la media dei valori pixel-per-pixel
+ndvi_mean2020 <- mean(ndvi_stack2020, na.rm = TRUE)
+
+# Visualizza la media NDVI su mappa con palette per daltonici "viridis"
+  plot(ndvi_mean2020, 
+          main = "Mean NDVI - Summer 2020 (Parco delle Madonie)",
+           col = viridis(100))
+
+# Year 2024
+
+tif_folder2024 <- "C:/SpatialEcology_Progetto/Madonie_2024"
+
+# Crea la lista di file .tif
+tif_files2024 <- list.files(path = tif_folder2024, pattern = "\\.tif$", full.names = TRUE)
+
+# Controlla che i file siano stati caricati
+print(tif_files2024)
+
+# Carica tutti i raster in uno stack
+ndvi_stack2024 <- rast(tif_files2024)
+
+# Calcola la media dei valori pixel-per-pixel
+ndvi_mean2024 <- mean(ndvi_stack2024, na.rm = TRUE)
+
+# Visualizza la media NDVI su mappa con palette per daltonici "viridis"
+  plot(ndvi_mean2024, 
+          main = "Mean NDVI - Summer 2024 (Parco delle Madonie)",
+           col = viridis(100))

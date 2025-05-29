@@ -13,13 +13,15 @@ library(terra)
 # I install the packages I am going to use 
 install.packages("readr")
 install.packages("ggplot2")
-install.packages("dplyr)"
+install.packages("dplyr")
+install.packages("viridis")
 
 
 # I upload the packages
 library(readr)
 library(ggplot2)
 library(dplyr)
+library(viridis)
 
 # I upload the data of the meteo station from my file of each year
 meteo2010 <- read_csv("C:/SpatialEcology_Progetto/ParcoMadonie_2010.csv")
@@ -36,15 +38,77 @@ head(meteo2020)
 meteo2024<- read_csv("C:/SpatialEcology_Progetto/ParcoMadonie_2024.csv")
 head(meteo2024)
 
-# I combine all the data of the meteo in one file
+# I bind all the data in one file
 meteo_all <- bind_rows(meteo2010, meteo2015, meteo2020, meteo2024)
 
-# I calculate the mean of the temperature of each year 
-mean_summer <- meteo_all %>%
-  group_by(anno) %>%
+# I make sure that the date are under the format date
+meteo_all$date <- as.Date(meteo_all$date)
+
+# I extract the year
+meteo_all$year <- format(meteo_all$date, "%Y")
+
+# I calculate the mean of temperature and precipitation for each year
+meteo_summary <- meteo_all %>%
+  group_by(year) %>%
   summarise(
- mean_temp = mean(tavg, na.rm = TRUE),
-    total_prec = sum(prec, na.rm = TRUE)
+    media_temp = mean(tavg, na.rm = TRUE),
+    totale_precipitazioni = sum(prcp, na.rm = TRUE)
   )
-print(mean_summer)
-CONTROLLA PERCHè NON FUNZIONAAAASAKFONKDSFNFDSJPDJKJW
+
+# I print the result
+print(meteo_summary)
+
+# I rename the columns to help me to do the graphs
+
+colnames(meteo_summary) <- c("year", "average_temperature", "total_precipitation")
+
+# I do the pltos of the total precepitations in summer and average temperatures
+# TOTAL PRECIPITATIONS
+ggplot(meteo_summary, aes(x = year, y = total_precipitation, group = 1)) +
+  geom_line(color = "steelblue", size = 1) +
+  geom_point(color = "steelblue", size = 3) +
+  labs(
+    title = "Total Summer Precipitation in the Madonie Park",
+    x = "Year",
+    y = "Total Precipitation (mm)"
+  ) +
+  theme_minimal()
+
+# AVERAGE TEMPERATURE
+ggplot(meteo_summary, aes(x = year, y = average_temperature, group = 1)) +
+  geom_line(color = "firebrick", size = 1) +
+  geom_point(color = "firebrick", size = 3) +
+  labs(
+    title = "Average Summer Temperature in the Madonie Park",
+    x = "Year",
+    y = "Average Temperature (°C)"
+  ) +
+  theme_minimal()
+
+
+# to download the images of the park for 2010, 2015, 2020, 2024 I use Copernicus with
+# sentinel 2 for the last three years, but for 2010 I have to use appEEARS, another 
+# NASA website with geodata
+
+# For the year 2010 I downloaded the images from 1/06/2010 to 31/08/2010 in NDVI format, 
+# then I made the mean of the NDVI to get just one image to see
+
+
+tif_folder <- "C:/SpatialEcology_Progetto/Madonie_2010"
+
+# Crea la lista di file .tif
+tif_files <- list.files(path = tif_folder, pattern = "\\.tif$", full.names = TRUE)
+
+# Controlla che i file siano stati caricati
+print(tif_files)
+
+# Carica tutti i raster in uno stack
+> ndvi_stack <- rast(tif_files)
+> 
+  > # Calcola la media dei valori pixel-per-pixel
+  > ndvi_mean <- mean(ndvi_stack, na.rm = TRUE)
+> 
+  > # Visualizza la media NDVI su mappa con palette per daltonici "viridis"
+  plot(ndvi_mean, 
+       +      main = "Mean NDVI - Summer 2010 (Parco delle Madonie)",
+       +      col = viridis(100))

@@ -237,6 +237,47 @@ ggplot(complete_data, aes(x = year, y = total_precip)) +
   theme_minimal()
 
 
+# Now I want to see if there is a correlation between the variance of NDVI and temperature/precipitation
+
+complete_data <- data.frame(
+  year = c(2010, 2015, 2020, 2024),
+  mean_ndvi = c(0.56, 0.58, 0.56, 0.53),
+  mean_temp = c(24.0, 21.9, 25.0, 25.1),
+  total_precip = c(5, 72.9, 9.2, 14.1)
+)
+
+# I correlate the data
+cor(complete_data$mean_ndvi, complete_data$mean_temp)
+cor(complete_data$mean_ndvi, complete_data$total_precip)
+
+# I make the plot 
+
+# Correlation NDVI and precipitation
+ggplot(complete_data, aes(x = total_precip, y = mean_ndvi)) +
+  geom_point(size = 3, color = "darkgreen") +
+  geom_smooth(method = "lm", se = FALSE, color = "orange") +
+  labs(
+    title = "NDVI vs Summer Precipitation",
+    x = "Total Summer Precipitation (mm)",
+    y = "Mean NDVI"
+  ) +
+  theme_minimal()
+
+
+
+# Correlation NDVI and temperature
+ggplot(complete_data, aes(x = mean_temp, y = mean_ndvi)) +
+  geom_point(size = 3, color = "steelblue") +
+  geom_smooth(method = "lm", se = FALSE, color = "darkred") +
+  labs(
+    title = "NDVI vs Summer Temperature",
+    x = "Mean Summer Temperature (°C)",
+    y = "Mean NDVI"
+  ) +
+  theme_minimal()
+
+
+
 
 
 

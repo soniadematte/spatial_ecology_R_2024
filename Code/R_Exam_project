@@ -2,28 +2,31 @@
 ### DESERTIFICATION IN SICILY, FOCUS ON PARCO DELLE MADONIE AND FUTURE TRENDS ###
 ***********************************************************************************
 
-# Use of the package "terra" for spatial data analysis
-library(terra)
 
 # Creation of dataframe: temperature and precipitation in Sicily for each year analysed (2010, 2015, 2020, 2025)
 # To create a dataframe I use can not use the package meteostat because is too old for R and Rstudio, so I have to download them manually
-# I download the data of temperature and precipitation for the period 01/06/2010 - 31/08/2010 of each year in Parco delle Madonie, located in Petralia Sottana
+# I download the data of temperature and precipitation for the period 01/06 - 31/08 of each year in Parco delle Madonie, located in Petralia Sottana
 # from the website of meteostat.
 
 # I install the packages I am going to use 
-install.packages("readr")
-install.packages("ggplot2")
-install.packages("dplyr")
-install.packages("viridis")
-install.packages("reshape2")
+install.packages("terra") # To handle raster data (e.g., satellite images in .tif format).
+install.packages("readr") # To read tabular data (CSV or TXT files) efficiently.
+install.packages("ggplot2") # To create high-quality plots.
+install.packages("dplyr") # To manipulate and clean data frames.
+install.packages("viridis") # To apply colorblind-friendly palettes to maps and plots.
+install.packages("reshape2") # To reshape data frames (especially from wide to long format).
 
 
 # I upload the packages
+library(terra) 
 library(readr)
 library(ggplot2)
 library(dplyr)
 library(viridis)
 library(reshape2)
+
+
+# 1. UPLOAD OF TEMPERATURE AND PRECIPITATION DATA
 
 # I upload the data of the meteo station from my file of each year
 meteo2010 <- read_csv("C:/SpatialEcology_Progetto/ParcoMadonie_2010.csv")
@@ -93,66 +96,58 @@ ggplot(meteo_summary, aes(x = year, y = average_temperature, group = 1)) +
 # because there is no data of the years 2010 and 2015 with Sentinel-2, so I use always the same kind of 
 # map to be more coherent and scientific. 
 
-# For the year 2010 I downloaded the images from 1/06/2010 to 31/08/2010 in NDVI format, 
+# For the year 2010 I downloaded the images from 1/06/2010 to 31/08/2010 in .tiff format, with NDVI included
 # then I made the mean of the NDVI to get just one image to see
 
 # Year 2010
 tif_folder2010 <- "C:/SpatialEcology_Progetto/Madonie_2010"
 
-# Crea la lista di file .tif
+# I created a list of files .tif
 tif_files2010 <- list.files(path = tif_folder2010, pattern = "\\.tif$", full.names = TRUE)
 
-# Controlla che i file siano stati caricati
+# I check that every file is uploaded
 print(tif_files2010)
 
-# Carica tutti i raster in uno stack
+# I put all the raster in one stack
 ndvi_stack2010 <- rast(tif_files2010)
 
- # Calcola la media dei valori pixel-per-pixel
+ # I calculated the average doing it pixel-per-pixel
  ndvi_mean2010 <- mean(ndvi_stack2010, na.rm = TRUE)
 
- # Visualizza la media NDVI su mappa con palette per daltonici "viridis"
+ # I visualize the NDVI mean on the map with the colorblind friendly palette "viridis"
   plot(ndvi_mean2010, 
             main = "Mean NDVI - Summer 2010 (Parco delle Madonie)",
             col = viridis(100))
 
+# I repeted the process for each interested year
 # Year 2015
 
 tif_folder2015 <- "C:/SpatialEcology_Progetto/Madonie_2015"
 
-# Crea la lista di file .tif
 tif_files2015 <- list.files(path = tif_folder2015, pattern = "\\.tif$", full.names = TRUE)
 
-# Controlla che i file siano stati caricati
 print(tif_files2015)
 
-# Carica tutti i raster in uno stack
 ndvi_stack2015 <- rast(tif_files2015)
 
-# Calcola la media dei valori pixel-per-pixel
 ndvi_mean2015 <- mean(ndvi_stack2015, na.rm = TRUE)
 
-# Visualizza la media NDVI su mappa con palette per daltonici "viridis"
   plot(ndvi_mean2015, 
           main = "Mean NDVI - Summer 2015 (Parco delle Madonie)",
            col = viridis(100))
 
 # Year 2020
+
 tif_folder2020 <- "C:/SpatialEcology_Progetto/Madonie_2020"
 
-# Crea la lista di file .tif
 tif_files2020 <- list.files(path = tif_folder2020, pattern = "\\.tif$", full.names = TRUE)
 
-# Controlla che i file siano stati caricati
 print(tif_files2020)
 
-# Carica tutti i raster in uno stack
 ndvi_stack2020 <- rast(tif_files2020)
 
-# Calcola la media dei valori pixel-per-pixel
 ndvi_mean2020 <- mean(ndvi_stack2020, na.rm = TRUE)
 
-# Visualizza la media NDVI su mappa con palette per daltonici "viridis"
   plot(ndvi_mean2020, 
           main = "Mean NDVI - Summer 2020 (Parco delle Madonie)",
            col = viridis(100))
@@ -161,27 +156,29 @@ ndvi_mean2020 <- mean(ndvi_stack2020, na.rm = TRUE)
 
 tif_folder2024 <- "C:/SpatialEcology_Progetto/Madonie_2024"
 
-# Crea la lista di file .tif
 tif_files2024 <- list.files(path = tif_folder2024, pattern = "\\.tif$", full.names = TRUE)
 
-# Controlla che i file siano stati caricati
 print(tif_files2024)
 
-# Carica tutti i raster in uno stack
 ndvi_stack2024 <- rast(tif_files2024)
 
-# Calcolo la diff NDVI dal 2024 al 2010
-ndvi_diff_2010_2024 <- ndvi_2024 - ndvi_2010
+ndvi_mean2024 <- mean(ndvi_stack2024, na.rm = TRUE)
 
-# Crea una nuova palette con transizione netta intorno allo zero
+# Now I calculate the NDVI diff between 2024 to 2010 to see I the vegetation has changed in 14 years
+
+# I calculate the NDVI diff 
+ndvi_diff_2010_2024 <- ndvi_mean2024 - ndvi_mean2010
+
+# I upload the library I need for the plot
+
 library(terra)
 library(viridis)
 
-# Now I calculate the NDVI diff between each year, and then from 2024 to 2010 to see more the impact
-# imposta colori personalizzati con soglia visuale più chiara
-palette_ndvi <- colorRampPalette(c("#313695", "#f7f7f7", "#006837"))  # blu - grigio - verde
 
-# Traccia il raster con la nuova palette
+# I decided to use these colors - blue, grey, green - to have an higher visible impact on the plot
+palette_ndvi <- colorRampPalette(c("#313695", "#f7f7f7", "#006837"))  
+
+# I do the raster with the new palette
 plot(ndvi_diff_2010_2024,
      col = palette_ndvi(100),
      main = "NDVI Change (2024 - 2010)",
@@ -191,6 +188,10 @@ plot(ndvi_diff_2010_2024,
 # Then I create a dataframe with all my data to compare vegetation, precipitation and temperature between all four years
 
 # I find the mean NDVI of each year with the function global of the package terra
+# The global() function calculates summary statistics (e.g., mean, min, max)
+# for the entire raster layer. It is used to extract a single value that 
+# represents the whole dataset, such as the average NDVI of a given year.
+
 ndvi_2010_val <- global(ndvi_mean2010, fun = mean, na.rm = TRUE)[[1]]
 ndvi_2015_val <- global(ndvi_mean2015, fun = mean, na.rm = TRUE)[[1]]
 ndvi_2020_val <- global(ndvi_mean2020, fun = mean, na.rm = TRUE)[[1]]
@@ -213,7 +214,7 @@ complete_data <- data.frame(
   total_precip = c(5, 72.9, 9.2, 14.1)
 )
 
-# NDVI plot
+# Now I do a NDVI plot
 
 ggplot(complete_data, aes(x = year, y = mean_ndvi)) +
   geom_line(color = "#1b9e77", size = 1.2) +
@@ -250,7 +251,7 @@ complete_data <- data.frame(
 cor(complete_data$mean_ndvi, complete_data$mean_temp)
 cor(complete_data$mean_ndvi, complete_data$total_precip)
 
-# I make the plot 
+# I make the plots
 
 # Correlation NDVI and precipitation
 ggplot(complete_data, aes(x = total_precip, y = mean_ndvi)) +
@@ -278,25 +279,22 @@ ggplot(complete_data, aes(x = mean_temp, y = mean_ndvi)) +
 
 
 
-
-
-
-# Now I want to do a prediction of NDVI based on the previously years, supponendo that it is a constat and linear variation
-# Modello lineare semplice
+# Now I want to do a prediction of NDVI based on the previously years, assuming that it is a constat and linear variation
+# Linear model
 ndvi_model <- lm(mean_ndvi ~ year, data = complete_data)
 
-# Previsione per il 2030
+# Prevision for 2030
 predicted_ndvi <- predict(ndvi_model, newdata = data.frame(year = 2030))
 print(predicted_ndvi)
 
-# NDVI trend: variazione media ogni 14 anni
+# NDVI trend: mean variation every 14
 ndvi_diff <- ndvi_mean2024 - ndvi_mean2010
-ndvi_trend <- ndvi_diff / 14  # variazione media annua
+ndvi_trend <- ndvi_diff / 14  # mean yearly variation
 
-# Proietta al 2030 (6 anni dopo il 2024)
+# Proietta al 2030 (6 anni dopo il 2024) 
 ndvi_2030 <- ndvi_mean2024 + ndvi_trend * 6
 
-# Visualizza
+# I visualise it
 plot(ndvi_2030,
      col = palette_ndvi(100),
      main = "Estimated NDVI - Summer 2030",
@@ -332,4 +330,90 @@ ggplot(ndvi_years, aes(x = year, y = mean_ndvi)) +
   ) +
   theme_minimal()
 
+# Now I want to calculate the NDVI with a image taken with sentinel-2 on Copernicus Browser, which is more accurate 
+# This is necessary to see if the NDVI is really rapresentative of the vegetation 
+
+library(terra)
+
+# I upload the raster (B04)
+b04 <- rast("B04.tiff")
+
+# I upload the shp file
+
+
+# Carica il file .shp (usa il percorso esatto dove l'hai salvato)
+parco <- vect("C:/SpatialEcology_Progetto/ParcoMadonie/ParcoMadonie.shp")
+
+# I cut the raster in the extension of the park 
+b04 <- rast("C:/SpatialEcology_Progetto/B04.tiff")
+
+# Crop + mask
+b04_crop <- crop(b04, parco)
+b04_masked <- mask(b04_crop, parco)
+
+library(viridis)
+
+plot(b04_masked,
+     col = viridis(100, option = "plasma"),
+     main = "B04 - Clipped to Parco delle Madonie",
+     zlim = c(0, max(values(b04_masked), na.rm = TRUE))
+
+b08 <- rast("C:/SpatialEcology_Progetto/B08.tiff")
+
+# I cut B08 on the park extension too
+b08_crop <- crop(b08, parco)
+b08_masked <- mask(b08_crop, parco)
+
+# Now I can calculate the NDVI Sentinel-2
+ndvi_s2_2024 <- (b08_masked - b04_masked) / (b08_masked + b04_masked)
+
+
+
+# I recall the library I need
+library(terra)
+library(ggplot2)
+
+# We resample the Sentinel NDVI raster to match the resolution and extent of the MODIS NDVI raster.
+# This is necessary to allow pixel-by-pixel comparison between the two datasets.
+
+ndvi_sentinel_resampled <- resample(ndvi_s2_2024, ndvi_mean2024)
+
+# I reproject the Sentinel-2 NDVI raster to match the coordinate reference system of the MODIS NDVI raster.
+# This ensures spatial alignment between the two datasets. Bilinear interpolation is used for continuous data.
+
+ndvi_s2_resampled <- project(ndvi_s2_2024, ndvi_mean2024, method = "bilinear")
+
+# I extract the pixel values from both the MODIS and resampled Sentinel-2 NDVI rasters
+ndvi_compare <- cbind(values(ndvi_mean2024), values(ndvi_s2_resampled))
+
+# I convert the combined pixel values into a data frame for easier manipulation and plotting
+ndvi_df <- as.data.frame(ndvi_compare)
+
+# I assign appropriate column names to the data frame
+colnames(ndvi_df) <- c("NDVI_MODIS", "NDVI_SENTINEL")
+
+# I remove any rows containing NA values to ensure accurate analysis
+ndvi_df <- na.omit(ndvi_df)
+
+# Now I cane create a plot where I can visualize if the rapresentation accurate
+
+library(ggplot2)
+ggplot(ndvi_df, aes(x = NDVI_MODIS, y = NDVI_SENTINEL)) +
+  geom_point(alpha = 0.3, color = "darkviolet") +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
+  labs(
+    title = "NDVI MODIS vs Sentinel-2 – Summer 2024",
+    x = "NDVI MODIS (2024)",
+    y = "NDVI Sentinel-2 (2024)"
+  ) +
+  theme_minimal()
+
+# Per capire se i dati di Sentinel si spiegano bene attraverso MODIS calcolo il coefficiente di determinazione
+# R^2, dove se R^2 > 0.8 allora è un ottimo allineamento tra sensori
+# Calcola la regressione
+mod <- lm(NDVI_SENTINEL ~ NDVI_MODIS, data = ndvi_df)
+
+# Calcola R²
+r2 <- summary(mod)$r.squared
+print(paste("R-squared:", round(r2, 3)))
 

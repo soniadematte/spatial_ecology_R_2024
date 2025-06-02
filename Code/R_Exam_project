@@ -1,11 +1,28 @@
-***********************************************************************************
-### DESERTIFICATION IN SICILY, FOCUS ON PARCO DELLE MADONIE AND FUTURE TRENDS ###
-***********************************************************************************
+#***********************************************************************************#
+##### DESERTIFICATION IN SICILY, FOCUS ON PARCO DELLE MADONIE AND FUTURE TRENDS #####
+#***********************************************************************************#
 
+# INDEX
+
+# 1. INTRODUCTION
+# 2. HYPOTESIS
+# 3. SOURCE
+# 4. INSTALLATION AND UPLOAD OF THE NECESSARY PACKAGES
+# 5. CREATION OF DATAFRAME WITH TEMPERATURES AND PRECIPITATION  OF 2010-2015-2020-2024 SUMMER
+
+# 6. DOWNLOAD AND VISUALIZATION OF EACH MEAN NDVI OF EVERY SUMMER
+# 6. PLOTS OF TOTAL PRECIPITATION AND AVERAGE TEMPERATURE OF EACH YEAR
+# 8. CALCULATION AND VISUALIZATION 
+
+# It is known that Sicily is one of the most dry and with extreme hot temperature italian regions, 
+# and every year the situation is aggravating. I decided to study a specific region of Sicily,
+# which is Parco delle Madonie, a naturalistic protected park.
+# Specifically, I wanted to see if the is a correlation between the increase of temperature and decrease
+# of precipitation with the decrease of vegetation. 
 
 # Creation of dataframe: temperature and precipitation in Sicily for each year analysed (2010, 2015, 2020, 2025)
 # To create a dataframe I use can not use the package meteostat because is too old for R and Rstudio, so I have to download them manually
-# I download the data of temperature and precipitation for the period 01/06 - 31/08 of each year in Parco delle Madonie, located in Petralia Sottana
+# I download the data of temperature and precipitation for the period 01/06 - 31/08 of each year in Parco delle Madonie, located near Petralia Sottana
 # from the website of meteostat.
 
 # https://appeears.earthdatacloud.nasa.gov/explore # Used to download the images + NDVI of Parco delle Madonie
@@ -29,6 +46,11 @@ library(ggplot2)
 library(dplyr)
 library(viridis)
 library(reshape2)
+
+# Creation of dataframe: temperature and precipitation in Sicily for each year analysed (2010, 2015, 2020, 2025)
+# To create a dataframe I use can not use the package meteostat because is too old for R and Rstudio, so I have to download them manually
+# I download the data of temperature and precipitation for the period 01/06 - 31/08 of each year in Parco delle Madonie, located in Petralia Sottana
+# from the website of meteostat.
 
 
 # 1. UPLOAD OF TEMPERATURE AND PRECIPITATION DATA
@@ -196,8 +218,9 @@ plot(ndvi_diff_2010_2024,
 # The global() function calculates summary statistics (e.g., mean, min, max)
 # for the entire raster layer. It is used to extract a single value that 
 # represents the whole dataset, such as the average NDVI of a given year.
+# it is different from ndvi_mean, which is a raster and not a number, where every pixel has a NDVI value
 
-ndvi_2010_val <- global(ndvi_mean2010, fun = mean, na.rm = TRUE)[[1]]
+ndvi_2010_val <- global(ndvi_mean2010, fun = mean, na.rm = TRUE)[[1]] # 'na.rm = TRUE' it is used to remove the missing values (NA) of those pixel that don't have data (becaus of clouds...)
 ndvi_2015_val <- global(ndvi_mean2015, fun = mean, na.rm = TRUE)[[1]]
 ndvi_2020_val <- global(ndvi_mean2020, fun = mean, na.rm = TRUE)[[1]]
 ndvi_2024_val <- global(ndvi_mean2024, fun = mean, na.rm = TRUE)[[1]]

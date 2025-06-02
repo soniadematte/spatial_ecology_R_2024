@@ -8,6 +8,11 @@
 # I download the data of temperature and precipitation for the period 01/06 - 31/08 of each year in Parco delle Madonie, located in Petralia Sottana
 # from the website of meteostat.
 
+# https://appeears.earthdatacloud.nasa.gov/explore # Used to download the images + NDVI of Parco delle Madonie
+# https://browser.dataspace.copernicus.eu/ # Used to download the image of Parco delle Madonie 2024 - B04 and B08
+# https://www.protectedplanet.net/32713 # Used to cut the region of Parco delle Madonie
+# https://meteostat.net/it/place/it/petralia-sottana # Used to download the data of temperature and precipitation
+
 # I install the packages I am going to use 
 install.packages("terra") # To handle raster data (e.g., satellite images in .tif format).
 install.packages("readr") # To read tabular data (CSV or TXT files) efficiently.

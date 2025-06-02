@@ -341,10 +341,10 @@ b04 <- rast("B04.tiff")
 # I upload the shp file
 
 
-# Carica il file .shp (usa il percorso esatto dove l'hai salvato)
+# I upload the .shp file (Using the percorso I have saved it in)
 parco <- vect("C:/SpatialEcology_Progetto/ParcoMadonie/ParcoMadonie.shp")
 
-# I cut the raster in the extension of the park 
+# I cut the raster in the extension of the park, to be more precise
 b04 <- rast("C:/SpatialEcology_Progetto/B04.tiff")
 
 # Crop + mask

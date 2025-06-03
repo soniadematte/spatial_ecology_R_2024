@@ -198,8 +198,8 @@ library(viridis)
 # I do the raster with the new palette
 plot(ndvi_diff_2010_2024,
      col = palette_ndvi(100),
-     main = "NDVI Change (2024 - 2010)",
-     zlim = c(-0.2, 0.2))
+     main = "NDVI Change (2024 - 2010)"
+    )
 
 # 8. CORRELATION BETWEEN TOTAL PRECIPITATION AND AVERAGE TEMPERATURE WITH NDVI
 # Then I create a dataframe with all my data to compare vegetation, precipitation and temperature between all four years

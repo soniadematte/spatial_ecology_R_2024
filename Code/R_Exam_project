@@ -223,8 +223,8 @@ dati_ndvi <- data.frame(
   mean_ndvi = c(ndvi_2010_val, ndvi_2015_val, ndvi_2020_val, ndvi_2024_val)
 )
 
-# I ptint the mean NDVI
-print(mean_ndvi)
+# I print the mean NDVI
+print(dati_ndvi)
 
 # I print again my meteo data
 print(meteo_summary)
@@ -232,7 +232,7 @@ print(meteo_summary)
 # Now I can get a dataframe with all the necessary data to create a plot
 complete_data <- data.frame(
   year = c(2010, 2015, 2020, 2024),
-  mean_ndvi = c(0.56, 0.58, 0.56, 0.53),
+  mean_ndvi = c(0.563, 0.579, 0.557, 0.527),
   mean_temp = c(24.0, 21.9, 25.0, 25.1),
   total_precip = c(5, 72.9, 9.2, 14.1)
 )

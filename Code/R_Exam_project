@@ -83,48 +83,27 @@ meteo_all$year <- format(meteo_all$date, "%Y")
 meteo_summary <- meteo_all %>%
   group_by(year) %>%
   summarise(
-    media_temp = mean(tavg, na.rm = TRUE),
-    totale_precipitazioni = sum(prcp, na.rm = TRUE)
+    average_temperature = mean(tavg, na.rm = TRUE),
+    total_precipitation = sum(prcp, na.rm = TRUE)
   )
 
-# I print the result
+# I print the result, I will need the information later to do the graphs to 
+# visualize the trend of precipitation and temperatures
 print(meteo_summary)
-
-# I rename the columns to help me to do the graphs
-
-colnames(meteo_summary) <- c("year", "average_temperature", "total_precipitation")
-
-# I do the pltos of the total precepitations in summer and average temperatures
-# TOTAL PRECIPITATIONS
-ggplot(meteo_summary, aes(x = year, y = total_precipitation, group = 1)) +
-  geom_line(color = "steelblue", size = 1) +
-  geom_point(color = "steelblue", size = 3) +
-  labs(
-    title = "Total Summer Precipitation in the Madonie Park",
-    x = "Year",
-    y = "Total Precipitation (mm)"
-  ) +
-  theme_minimal()
-
-# AVERAGE TEMPERATURE
-ggplot(meteo_summary, aes(x = year, y = average_temperature, group = 1)) +
-  geom_line(color = "firebrick", size = 1) +
-  geom_point(color = "firebrick", size = 3) +
-  labs(
-    title = "Average Summer Temperature in the Madonie Park",
-    x = "Year",
-    y = "Average Temperature (°C)"
-  ) +
-  theme_minimal()
 
 
 # to download the images of the park for 2010, 2015, 2020, 2024 I have to use appEEARS, another 
-# NASA website with geodata, beacuse even though is not extreme good quality it is better for me to use 
+# NASA website with geodata, beacuse even though is not extreme good quality (use of MODIS, which has a
+# resolution of one pixel per 250 m^2) it is better for me to use 
 # because there is no data of the years 2010 and 2015 with Sentinel-2, so I use always the same kind of 
 # map to be more coherent and scientific. 
 
 # For the year 2010 I downloaded the images from 1/06/2010 to 31/08/2010 in .tiff format, with NDVI included
 # then I made the mean of the NDVI to get just one image to see
+
+# I decided to use these colors - blue, grey, green - to have an higher visible impact on the plot
+# so I created the function with the new palette
+palette_ndvi <- colorRampPalette(c("#313695", "#f7f7f7", "#006837"))  
 
 # Year 2010
 tif_folder2010 <- "C:/SpatialEcology_Progetto/Madonie_2010"
@@ -141,10 +120,11 @@ ndvi_stack2010 <- rast(tif_files2010)
  # I calculated the average doing it pixel-per-pixel
  ndvi_mean2010 <- mean(ndvi_stack2010, na.rm = TRUE)
 
- # I visualize the NDVI mean on the map with the colorblind friendly palette "viridis"
+ # I visualize the NDVI mean on the map with a variation of the colorblind friendly palette "viridis"
   plot(ndvi_mean2010, 
             main = "Mean NDVI - Summer 2010 (Parco delle Madonie)",
-            col = viridis(100))
+            col = palette_ndvi(100))   ## Generate 100 color values from the custom color palette
+                                        ## This creates a smooth transition for the NDVI map
 
 # I repeted the process for each interested year
 # Year 2015
@@ -161,7 +141,7 @@ ndvi_mean2015 <- mean(ndvi_stack2015, na.rm = TRUE)
 
   plot(ndvi_mean2015, 
           main = "Mean NDVI - Summer 2015 (Parco delle Madonie)",
-           col = viridis(100))
+           col = palette_ndvi(100)) 
 
 # Year 2020
 
@@ -177,7 +157,7 @@ ndvi_mean2020 <- mean(ndvi_stack2020, na.rm = TRUE)
 
   plot(ndvi_mean2020, 
           main = "Mean NDVI - Summer 2020 (Parco delle Madonie)",
-           col = viridis(100))
+           col = palette_ndvi(100))
 
 # Year 2024
 
@@ -191,6 +171,10 @@ ndvi_stack2024 <- rast(tif_files2024)
 
 ndvi_mean2024 <- mean(ndvi_stack2024, na.rm = TRUE)
 
+  plot(ndvi_mean2024, 
+          main = "Mean NDVI - Summer 2024 (Parco delle Madonie)",
+           col = palette_ndvi(100))
+
 # Now I calculate the NDVI diff between 2024 to 2010 to see I the vegetation has changed in 14 years
 
 # I calculate the NDVI diff 
@@ -202,8 +186,7 @@ library(terra)
 library(viridis)
 
 
-# I decided to use these colors - blue, grey, green - to have an higher visible impact on the plot
-palette_ndvi <- colorRampPalette(c("#313695", "#f7f7f7", "#006837"))  
+
 
 # I do the raster with the new palette
 plot(ndvi_diff_2010_2024,
@@ -220,7 +203,9 @@ plot(ndvi_diff_2010_2024,
 # represents the whole dataset, such as the average NDVI of a given year.
 # it is different from ndvi_mean, which is a raster and not a number, where every pixel has a NDVI value
 
-ndvi_2010_val <- global(ndvi_mean2010, fun = mean, na.rm = TRUE)[[1]] # 'na.rm = TRUE' it is used to remove the missing values (NA) of those pixel that don't have data (becaus of clouds...)
+ndvi_2010_val <- global(ndvi_mean2010, fun = mean, na.rm = TRUE)[[1]] # 'na.rm = TRUE' it is used to remove
+                                                                      # the missing values (NA) of those pixel
+                                                                      # that don't have data (becaus of clouds...)
 ndvi_2015_val <- global(ndvi_mean2015, fun = mean, na.rm = TRUE)[[1]]
 ndvi_2020_val <- global(ndvi_mean2020, fun = mean, na.rm = TRUE)[[1]]
 ndvi_2024_val <- global(ndvi_mean2024, fun = mean, na.rm = TRUE)[[1]]
@@ -233,6 +218,9 @@ dati_ndvi <- data.frame(
 
 # I get the mean NDVI
 print(mean_ndvi)
+
+# I print again my meteo data
+print(meteo_summary)
 
 # Now I can get a dataframe with all the necessary data to create a plot
 complete_data <- data.frame(
@@ -267,15 +255,8 @@ ggplot(complete_data, aes(x = year, y = total_precip)) +
 
 
 # Now I want to see if there is a correlation between the variance of NDVI and temperature/precipitation
-
-complete_data <- data.frame(
-  year = c(2010, 2015, 2020, 2024),
-  mean_ndvi = c(0.56, 0.58, 0.56, 0.53),
-  mean_temp = c(24.0, 21.9, 25.0, 25.1),
-  total_precip = c(5, 72.9, 9.2, 14.1)
-)
-
 # I correlate the data
+
 cor(complete_data$mean_ndvi, complete_data$mean_temp)
 cor(complete_data$mean_ndvi, complete_data$total_precip)
 
@@ -365,9 +346,6 @@ library(terra)
 
 # I upload the raster (B04)
 b04 <- rast("B04.tiff")
-
-# I upload the shp file
-
 
 # I upload the .shp file (Using the percorso I have saved it in)
 parco <- vect("C:/SpatialEcology_Progetto/ParcoMadonie/ParcoMadonie.shp")

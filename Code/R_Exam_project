@@ -5,7 +5,7 @@
 ### INDEX
 
 # 1. INTRODUCTION
-# 2. HYPOTESIS
+# 2. HYPOTHESIS
 # 3. SOURCE
 # 4. INSTALLATION AND UPLOAD OF THE NECESSARY PACKAGES
 # 5. CREATION OF DATAFRAME WITH TEMPERATURES AND PRECIPITATION  OF 2010-2015-2020-2024 SUMMER
@@ -223,7 +223,7 @@ dati_ndvi <- data.frame(
   mean_ndvi = c(ndvi_2010_val, ndvi_2015_val, ndvi_2020_val, ndvi_2024_val)
 )
 
-# I get the mean NDVI
+# I ptint the mean NDVI
 print(mean_ndvi)
 
 # I print again my meteo data
@@ -292,9 +292,10 @@ ggplot(complete_data, aes(x = mean_temp, y = mean_ndvi)) +
   ) +
   theme_minimal()
 
-# CALCULATION OF 2024 NDVI FROM SENTINEL-2
+## CALCULATION OF 2024 NDVI FROM SENTINEL-2
 # Now I want to calculate the NDVI with a image taken with sentinel-2 on Copernicus Browser, which is more accurate 
-# This is necessary to see if the MODIS NDVI is really rapresentative of the vegetation 
+# This is necessary to see if the MODIS NDVI is really rapresentative of the vegetation, to verify that 
+# MODIS has valid data
 
 library(terra)
 
@@ -410,8 +411,7 @@ ndvi_2030 <- ndvi_mean2024 + ndvi_trend * 6
 # I visualise it in a map
 plot(ndvi_2030,
      col = palette_ndvi(100),
-     main = "Estimated NDVI - Summer 2030",
-      zlim = c(-0.2, 0.2)
+     main = "Estimated NDVI - Summer 2030"
 )
 
 ## 13. STATISTIC NDVI VALUE PREDICTION FOR 2030

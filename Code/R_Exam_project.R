@@ -303,24 +303,24 @@ library(terra)
 # using for photosynteshis), so if I have a low value of B04, it means that plants are absorbing a lot 
 # of light and are alive and healthy
 
-b04 <- rast("B04.tiff")
 
-# I upload the .shp file (Using the percorso I have saved it in)
+# I upload the .shp file that let me cut the park (Using the percorso I have saved it in)
 parco <- vect("C:/SpatialEcology_Progetto/ParcoMadonie/ParcoMadonie.shp")
 
-# I cut the raster in the extension of the park, to be more precise
+# I upload the band b04
 b04 <- rast("C:/SpatialEcology_Progetto/B04.tiff")
 
-# Crop + mask
+# I cut the raster in the extension of the park, to be more precise
+
 b04_crop <- crop(b04, parco)
 b04_masked <- mask(b04_crop, parco)
 
 library(viridis)
 
 plot(b04_masked,
-     col = viridis(100, option = "plasma"),
+    col = viridis(100),
      main = "B04 - Clipped to Parco delle Madonie",
-     zlim = c(0, max(values(b04_masked), na.rm = TRUE))
+     zlim = c(0, max(values(b04_masked), na.rm = TRUE)))
 
 # I upload the raster b08 - the NIR (NearInfraRed) is the invisible to human eye light that plants reflect
 # B08 has high value when plants reflect more, and it means that they are alive and not stressed
@@ -329,6 +329,12 @@ b08 <- rast("C:/SpatialEcology_Progetto/B08.tiff")
 # I cut B08 on the park extension too
 b08_crop <- crop(b08, parco)
 b08_masked <- mask(b08_crop, parco)
+
+
+plot(b08_masked,
+    col = viridis(100),
+     main = "B08 - Clipped to Parco delle Madonie",
+     zlim = c(0, max(values(b04_masked), na.rm = TRUE)))
 
 # Now I can calculate the NDVI Sentinel-2
 # to get the NDVI I have to:
@@ -411,8 +417,7 @@ ndvi_2030 <- ndvi_mean2024 + ndvi_trend * 6
 # I visualise it in a map
 plot(ndvi_2030,
      col = palette_ndvi(100),
-     main = "Estimated NDVI - Summer 2030"
-)
+     main = "Estimated NDVI - Summer 2030")
 
 ## 13. STATISTIC NDVI VALUE PREDICTION FOR 2030
 # Now I do a statistic linear regression to understand how NDVI will be in 2030, 
@@ -422,7 +427,7 @@ plot(ndvi_2030,
 # to understend the trend in the years
 ndvi_years <- data.frame(
   year = c(2010, 2015, 2020, 2024),
-  mean_ndvi = c(0.5631159, 0.5792164, 0.5631159, 0.5273455)
+  mean_ndvi = c(0.5631159, 0.5792164, 0.5578672, 0.5273455)
 )
 
 # I do a linear regression to calculate the NDVI in the year 2030, this is done by understanding
@@ -437,8 +442,8 @@ ndvi_years <- rbind(ndvi_years, data.frame(year = 2030, mean_ndvi = predicted_20
 
 # Plot
 ggplot(ndvi_years, aes(x = year, y = mean_ndvi)) +
-  geom_line(color = "#1b9e77", size = 1.2) +
-  geom_point(color = "#1b9e77", size = 3) +
+  geom_line(color = "blue", size = 1.2) +
+  geom_point(color = "red", size = 3) +
   ylim(0.50, 0.60) +    # I know that my NDVI are in a range between 0.50 and 0.60, so a put this limit on the y aes
   labs(
     title = "Mean Summer NDVI Trend (2010–2030)",
